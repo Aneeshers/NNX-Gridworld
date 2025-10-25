@@ -8,7 +8,7 @@ NNX-Gridworld provides a pure JAX implementation of a simple grid world environm
 
 Trained agent navigating to the goal:
 
-![Expert Policy Rollout](control/learning/ppo/state_rollout_b3.gif)
+![Expert Policy Rollout](state_rollout_b3.gif)
 
 ### Key Features
 - **One file**
@@ -61,7 +61,7 @@ The GridWorld environment is a simple navigation task where:
 
 The PPO agent learns to solve the gridworld task efficiently:
 
-![PPO Training Results](control/learning/ppo/ppo_training_results.png)
+![PPO Training Results](ppo_training_results.png)
 
 
 ## Architecture
@@ -75,8 +75,6 @@ The PPO agent learns to solve the gridworld task efficiently:
 - **Input**: 8x8 RGB image of the grid
 - **Network**: CNN encoder + MLP heads
 - **Output**: Action probabilities and value estimate
-
-## Implementation Highlights
 
 ### JIT Compilation
 The entire training loop is JIT-compiled for maximum performance:
@@ -114,7 +112,7 @@ class ActorCritic(nnx.Module):
         self.critic = nnx.Linear(64, 1)
 ```
 
-## Performance
+## Details
 
 Training 5000 epochs with:
 - 32 parallel environments
