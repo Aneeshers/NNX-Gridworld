@@ -148,7 +148,7 @@ gamma        = 0.95
 
 B = 32
 T = 32
-epochs = 5000
+epochs = 1000
 k_update_iterations = 5
 
 env = SimpleGridWorld(10, 2)
