@@ -1,6 +1,6 @@
 # NNX-Gridworld
 
-A one file, fast, fully JIT-compilable GridWorld environment with PPO implementation using JAX and Flax's new NNX library.
+A one file, fast, fully JIT-compilable GridWorld environment with PPO implementation using JAX and Flax's experimental NNX library.
 
 ## Overview
 
