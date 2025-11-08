@@ -1,0 +1,47 @@
+{
+  "os": "Linux-6.11.0-29-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.12.3",
+  "startedAt": "2025-11-08T00:14:15.264690Z",
+  "program": "/home/ubuntu/tensorflow_test/control/nnx_gridworld/ppo_simple_grid.py",
+  "codePath": "ppo_simple_grid.py",
+  "codePathLocal": "ppo_simple_grid.py",
+  "git": {
+    "remote": "git@github.com:Aneeshers/NNX-Gridworld.git",
+    "commit": "5df94c211b86453d9777656c3d58487c6fc90774"
+  },
+  "email": "aneeshmuppidi19@gmail.com",
+  "root": "/home/ubuntu/tensorflow_test/control/nnx_gridworld",
+  "host": "192-222-55-91",
+  "executable": "/usr/bin/python",
+  "cpu_count": 26,
+  "cpu_count_logical": 52,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "gpu_count": 2,
+  "disk": {
+    "/": {
+      "total": "5856831430656",
+      "used": "3672275845120"
+    }
+  },
+  "memory": {
+    "total": "475294711808"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA H100 80GB HBM3",
+      "memoryTotal": "85520809984",
+      "cudaCores": 16896,
+      "architecture": "Hopper",
+      "uuid": "GPU-cee2e40e-28a5-bfec-511d-a5f0bc3cef1d"
+    },
+    {
+      "name": "NVIDIA H100 80GB HBM3",
+      "memoryTotal": "85520809984",
+      "cudaCores": 16896,
+      "architecture": "Hopper",
+      "uuid": "GPU-d159a699-902d-c0d3-72f7-d6300ce021f1"
+    }
+  ],
+  "cudaVersion": "12.8",
+  "writerId": "deny8k57kclierd933dconsmor6puye4"
+}

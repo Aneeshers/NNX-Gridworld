@@ -1,0 +1,86 @@
+_wandb:
+    value:
+        cli_version: 0.21.3
+        e:
+            o3onte2z3nqkypcs2gacdo63orguaqpu:
+                codePath: ppo_simple_grid.py
+                codePathLocal: ppo_simple_grid.py
+                cpu_count: 26
+                cpu_count_logical: 52
+                cudaVersion: "12.8"
+                disk:
+                    /:
+                        total: "5856831430656"
+                        used: "3672290357248"
+                email: aneeshmuppidi19@gmail.com
+                executable: /usr/bin/python
+                git:
+                    commit: 5df94c211b86453d9777656c3d58487c6fc90774
+                    remote: git@github.com:Aneeshers/NNX-Gridworld.git
+                gpu: NVIDIA H100 80GB HBM3
+                gpu_count: 2
+                gpu_nvidia:
+                    - architecture: Hopper
+                      cudaCores: 16896
+                      memoryTotal: "85520809984"
+                      name: NVIDIA H100 80GB HBM3
+                      uuid: GPU-cee2e40e-28a5-bfec-511d-a5f0bc3cef1d
+                    - architecture: Hopper
+                      cudaCores: 16896
+                      memoryTotal: "85520809984"
+                      name: NVIDIA H100 80GB HBM3
+                      uuid: GPU-d159a699-902d-c0d3-72f7-d6300ce021f1
+                host: 192-222-55-91
+                memory:
+                    total: "475294711808"
+                os: Linux-6.11.0-29-generic-x86_64-with-glibc2.39
+                program: /home/ubuntu/tensorflow_test/control/nnx_gridworld/ppo_simple_grid.py
+                python: CPython 3.12.3
+                root: /home/ubuntu/tensorflow_test/control/nnx_gridworld
+                startedAt: "2025-11-08T00:16:44.749256Z"
+                writerId: o3onte2z3nqkypcs2gacdo63orguaqpu
+        m: []
+        python_version: 3.12.3
+        t:
+            "1":
+                - 12
+                - 45
+            "2":
+                - 12
+                - 45
+            "3":
+                - 2
+                - 16
+                - 61
+            "4": 3.12.3
+            "5": 0.21.3
+            "12": 0.21.3
+            "13": linux-x86_64
+algo:
+    value: PPO
+batch_size_B:
+    value: 4096
+env:
+    value: SimpleGridWorld
+env_dim:
+    value: 10
+epochs:
+    value: 2000
+eps_clip:
+    value: 0.2
+framework:
+    value: JAX + Flax NNX
+gamma:
+    value: 0.95
+k_update_iterations:
+    value: 5
+learning_rate:
+    value: 0.0003
+network_hidden_sizes:
+    value:
+        - 64
+        - 64
+rollout_T:
+    value: 32
+value_coef:
+    value: 0.5

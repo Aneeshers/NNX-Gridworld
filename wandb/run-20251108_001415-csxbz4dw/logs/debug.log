@@ -1,0 +1,26 @@
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_setup.py:_flush():81] Current SDK version is 0.21.3
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_setup.py:_flush():81] Configure stats pid to 1447281
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_setup.py:_flush():81] Loading settings from /home/ubuntu/.config/wandb/settings
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_setup.py:_flush():81] Loading settings from /home/ubuntu/tensorflow_test/control/nnx_gridworld/wandb/settings
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_init.py:setup_run_log_directory():686] Logging user logs to /home/ubuntu/tensorflow_test/control/nnx_gridworld/wandb/run-20251108_001415-csxbz4dw/logs/debug.log
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_init.py:setup_run_log_directory():687] Logging internal logs to /home/ubuntu/tensorflow_test/control/nnx_gridworld/wandb/run-20251108_001415-csxbz4dw/logs/debug-internal.log
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_init.py:init():813] calling init triggers
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_init.py:init():818] wandb.init called with sweep_config: {}
+config: {'algo': 'PPO', 'env': 'SimpleGridWorld', 'env_dim': 10, 'network_hidden_sizes': [64, 64], 'value_coef': 0.5, 'eps_clip': 0.2, 'gamma': 0.95, 'batch_size_B': 1024, 'rollout_T': 32, 'epochs': 2000, 'k_update_iterations': 5, 'learning_rate': 0.0003, 'framework': 'JAX + Flax NNX', '_wandb': {}}
+2025-11-08 00:14:15,267 INFO    MainThread:1447281 [wandb_init.py:init():854] starting backend
+2025-11-08 00:14:15,474 INFO    MainThread:1447281 [wandb_init.py:init():857] sending inform_init request
+2025-11-08 00:14:15,479 INFO    MainThread:1447281 [wandb_init.py:init():865] backend started and connected
+2025-11-08 00:14:15,480 INFO    MainThread:1447281 [wandb_init.py:init():936] updated telemetry
+2025-11-08 00:14:15,484 INFO    MainThread:1447281 [wandb_init.py:init():960] communicating run to backend with 90.0 second timeout
+2025-11-08 00:14:15,940 INFO    MainThread:1447281 [wandb_init.py:init():1011] starting run threads in backend
+2025-11-08 00:14:16,119 INFO    MainThread:1447281 [wandb_run.py:_console_start():2494] atexit reg
+2025-11-08 00:14:16,119 INFO    MainThread:1447281 [wandb_run.py:_redirect():2342] redirect: wrap_raw
+2025-11-08 00:14:16,119 INFO    MainThread:1447281 [wandb_run.py:_redirect():2411] Wrapping output streams.
+2025-11-08 00:14:16,119 INFO    MainThread:1447281 [wandb_run.py:_redirect():2434] Redirects installed.
+2025-11-08 00:14:16,121 INFO    MainThread:1447281 [wandb_init.py:init():1057] run started, returning control to user process
+2025-11-08 00:14:37,293 INFO    MainThread:1447281 [wandb_run.py:_finish():2260] finishing run aneeshmuppidi19/nnx-gridworld-ppo/csxbz4dw
+2025-11-08 00:14:37,293 INFO    MainThread:1447281 [wandb_run.py:_atexit_cleanup():2459] got exitcode: 0
+2025-11-08 00:14:37,293 INFO    MainThread:1447281 [wandb_run.py:_restore():2441] restore
+2025-11-08 00:14:37,293 INFO    MainThread:1447281 [wandb_run.py:_restore():2447] restore done
+2025-11-08 00:14:37,835 INFO    MainThread:1447281 [wandb_run.py:_footer_sync_info():3855] logging synced files

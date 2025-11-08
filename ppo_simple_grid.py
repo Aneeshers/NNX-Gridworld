@@ -3,9 +3,11 @@ import jax
 import jax.numpy as jnp
 from jax import Array
 from flax import nnx
+from BlackWorld import SimpleGridWorld
 import optax
 
 import os
+import wandb
 
 class EnvState(NamedTuple):
     agent_pos: Array  
@@ -28,78 +30,6 @@ COLOR_MAP = jnp.array(
     dtype=jnp.uint8
 )
 
-class SimpleGridWorld:
-    def __init__(self, dim: int, tile: int = 8):
-        self.dim = int(dim)
-        self.tile = int(tile)
-
-    def init(self, key: Array) -> EnvState:
-
-        dim = self.dim
-        key, kx, ky, kgx, kgy = jax.random.split(key, 5)
-        agent = jnp.stack([
-            jax.random.randint(kx,  (), 0, dim, dtype=jnp.int32),
-            jax.random.randint(ky,  (), 0, dim, dtype=jnp.int32),
-        ])
-        goal  = jnp.stack([
-            jax.random.randint(kgx, (), 0, dim, dtype=jnp.int32),
-            jax.random.randint(kgy, (), 0, dim, dtype=jnp.int32),
-        ])
-        return EnvState(agent, goal, key)
-
-    def reset(self, state: EnvState) -> EnvState:
-        return self.init(state.key)
-
-    def get_grid(self, state: EnvState) -> Array:
-        dim = self.dim
-        grid = jnp.zeros((dim, dim), jnp.int32)
-        ax, ay = state.agent_pos
-        gx, gy = state.goal_pos
-        grid = grid.at[ax, ay].set(1)
-        grid = grid.at[gx, gy].set(2)
-        return grid
-
-    def step(self, state: EnvState, action) -> tuple[EnvState, tuple[Array, Array, Array]]:
-        """
-        returns: (new_state, (obs, reward, done))
-        """
-        dim = self.dim
-        action = jnp.asarray(action, jnp.int32)
-        delta  = jnp.take(ACTIONS, action, axis=0, mode="clip")
-        new_agent_pos = jnp.clip(state.agent_pos + delta, 0, dim - 1)
-
-        done   = jnp.all(new_agent_pos == state.goal_pos)        # bool
-        reward = jnp.where(done, 1.0, -0.01)                       # float32
-
-        # Create state before potential reset (for observation)
-        pre_reset_state = EnvState(new_agent_pos, state.goal_pos, state.key)
-        obs = self.get_grid(pre_reset_state)  # Get observation BEFORE reset
-        
-        key, reset_key = jax.random.split(state.key)
-        reset_state = self.init(reset_key)
-        
-        next_state = jax.lax.cond(
-            done,
-            lambda _: reset_state,  # If done, use reset state for next step
-            lambda _: EnvState(new_agent_pos, state.goal_pos, key),  # Otherwise use new position
-            None
-        )
-        
-        return next_state, (obs, reward, done)
-
-    def render(self, state: EnvState) -> Array:
-        dim, tile = self.dim, self.tile
-        grid = self.get_grid(state)
-
-        def paint_cell(color: int):
-            rgb = COLOR_MAP[color]
-            return jnp.ones((tile, tile, 3), dtype=jnp.uint8) * rgb
-
-        row_fn = jax.vmap(paint_cell, in_axes=0, out_axes=0)
-        tiles  = jax.vmap(row_fn,    in_axes=0, out_axes=0)(grid)
-
-        return tiles.transpose(0, 2, 1, 3, 4).reshape(dim * tile, dim * tile, 3)
-
 class FeedForwardNN(nnx.Module):
     def __init__(self, din: int, dout: int, *, rngs=nnx.Rngs):
         self.linear1 = nnx.Linear(in_features=din, out_features=64, rngs=rngs)
@@ -117,9 +47,9 @@ value_coef   = 0.5
 eps_clip     = 0.2
 gamma        = 0.95
 
-B = 32
+B = 4096
 T = 32
-epochs = 5000
+epochs = 2000
 k_update_iterations = 5
 
 env = SimpleGridWorld(10, 8)
@@ -132,9 +62,33 @@ rngs   = nnx.Rngs(0)
 actor  = FeedForwardNN(din=env.dim * env.dim, dout=4, rngs=rngs)
 critic = FeedForwardNN(din=env.dim * env.dim, dout=1, rngs=rngs)
 
-tx = optax.adam(3e-4)
+learning_rate = 3e-4
+tx = optax.adam(learning_rate)
 opt_actor  = nnx.Optimizer(actor,  tx, wrt=nnx.Param)
 opt_critic = nnx.Optimizer(critic, tx, wrt=nnx.Param)
+
+# Weights & Biases setup
+wandb_project = os.environ.get("WANDB_PROJECT", "nnx-gridworld-ppo")
+wandb_run_name = os.environ.get("WANDB_RUN_NAME", None)
+wandb.init(
+    project=wandb_project,
+    name=wandb_run_name,
+    config={
+        "algo": "PPO",
+        "env": "SimpleGridWorld",
+        "env_dim": int(env.dim),
+        "network_hidden_sizes": [64, 64],
+        "value_coef": float(value_coef),
+        "eps_clip": float(eps_clip),
+        "gamma": float(gamma),
+        "batch_size_B": int(B),
+        "rollout_T": int(T),
+        "epochs": int(epochs),
+        "k_update_iterations": int(k_update_iterations),
+        "learning_rate": float(learning_rate),
+        "framework": "JAX + Flax NNX",
+    },
+)
 
 # NNX-scan helpers
 @nnx.scan(in_axes=(nnx.Carry, 0, 0), out_axes=(nnx.Carry, 0), reverse=True)
@@ -283,10 +237,31 @@ avg_rewards = np.array(epoch_avg_rewards)
 avg_lengths = np.array(epoch_avg_lengths)
 success_rates = np.array(epoch_success_rates)
 action_entropies = np.array(epoch_action_entropy)
+max_rewards = np.array(epoch_max_rewards)
+grad_norm_actor_arr = np.array(epoch_grad_norm_actor)
+grad_norm_critic_arr = np.array(epoch_grad_norm_critic)
 
 total_losses = total_losses.mean(axis=1)
 act_losses = act_losses.mean(axis=1)
 value_losses = value_losses.mean(axis=1)
+
+# Log per-epoch metrics to Weights & Biases
+for epoch_idx in range(int(epochs)):
+    wandb.log(
+        {
+            "loss/total": float(total_losses[epoch_idx]),
+            "loss/actor": float(act_losses[epoch_idx]),
+            "loss/value": float(value_losses[epoch_idx]),
+            "episode/avg_reward": float(avg_rewards[epoch_idx]),
+            "episode/avg_length": float(avg_lengths[epoch_idx]),
+            "episode/success_rate": float(success_rates[epoch_idx]),
+            "episode/max_reward": float(max_rewards[epoch_idx]),
+            "policy/entropy": float(action_entropies[epoch_idx]),
+            "grads/actor_norm": float(grad_norm_actor_arr[epoch_idx]),
+            "grads/critic_norm": float(grad_norm_critic_arr[epoch_idx]),
+        },
+        step=epoch_idx,
+    )
 
 def smooth_curve(data, window_size=10):
     if len(data) < window_size:
@@ -346,6 +321,9 @@ axes[1, 2].legend()
 plt.tight_layout()
 plt.savefig('ppo_training_results.png', dpi=150)
 
+# Log training plot image
+wandb.log({"plots/training": wandb.Image('ppo_training_results.png')})
+
 
 import imageio.v2 as imageio
 B = 4
@@ -377,3 +355,13 @@ for b in range(B):
 imageio.mimsave("state_rollout_b2_side_by_side.gif",
                 [np.concatenate([frames_tb[t,0], frames_tb[t,1]], axis=1) for t in range(T)],
                 duration=1.0/fps)
+
+# Log rollout GIFs
+rollout_videos = [wandb.Video(f"state_rollout_b{b}.gif", fps=fps, format="gif") for b in range(B)]
+wandb.log({
+    "rollouts/batch": rollout_videos,
+    "rollouts/side_by_side": wandb.Video("state_rollout_b2_side_by_side.gif", fps=fps, format="gif"),
+})
+
+# Finish wandb run
+wandb.finish()
